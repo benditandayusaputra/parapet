@@ -13,7 +13,7 @@ Both directions use the same **Counterparty Verification Protocol (CVP)**, the s
 
 ## Quick start
 
-Requires Python 3.11+. No third-party dependencies for the sandbox.
+Requires Python 3.11+. No third-party dependencies for the sandbox; the web app needs `fastapi` and `uvicorn` (see [Run the app](#run-the-app)).
 
 ```bash
 git clone https://github.com/benditandayusaputra/parapet.git
@@ -33,6 +33,17 @@ INV-OUT-5133     receivable executed     risk=0.05  Settlement agreed and signed
 ```
 
 Three payables, three different outcomes on purpose: a clean invoice is paid, a business-email-compromise invoice is held with no money moved, and a genuine bank change is verified by handshake but still routed to the owner for a one-tap approval.
+
+## Run the app
+
+A local web app around the same agent: run the queue, inspect each decision and handshake, approve prepared payments, change the policy, read the audit log.
+
+```bash
+pip install -r requirements.txt
+uvicorn parapet.api:app --reload
+```
+
+Open http://localhost:8000. The live audit log is written to `evidence_live/audit_log.jsonl`. API: `GET /queue`, `POST /run`, `POST /invoice/{id}/run`, `GET /invoice/{id}`, `POST /invoice/{id}/approve`, `GET|POST /policy`, `GET /audit`, `POST /reset`.
 
 ### Optional: model-written explanations
 
@@ -61,8 +72,13 @@ parapet/
   ledger.py          sandbox ledger and seed data
   reasoner.py        plain-language explanations (template or model)
   cli.py             runs the scenarios and writes evidence/
+  api.py             FastAPI app: the same sandbox, driven interactively from demo/app.html
 tests/
   test_parapet.py    12 tests covering fraud hold, caps, tiers, negotiation, audit tamper detection
+  test_api.py        API tests (FastAPI TestClient)
+demo/
+  app.html           live owner UI served by api.py
+  demo.html          self-playing scripted demo used to record Parapet_Demo.mp4
 evidence/
   audit_log.jsonl    execution evidence: every observation, decision, handshake and action
   summary.md         human-readable outcome per invoice

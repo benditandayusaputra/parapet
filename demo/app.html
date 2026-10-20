@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parapet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 rx=%273%27 fill=%27%230B1530%27/%3E%3Crect x=%273%27 y=%277%27 width=%2710%27 height=%276%27 fill=%27%235FC3B1%27/%3E%3Crect x=%273%27 y=%273%27 width=%272.5%27 height=%273%27 fill=%27%23E8A04A%27/%3E%3Crect x=%276.75%27 y=%273%27 width=%272.5%27 height=%273%27 fill=%27%23E8A04A%27/%3E%3Crect x=%2710.5%27 y=%273%27 width=%272.5%27 height=%273%27 fill=%27%23E8A04A%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--navy:#0B1530;--navy2:#14213D;--navy3:#1B2E57;--paper:#F7F6F2;--ink:#E6EEF2;--muted:#8FA3B0;--teal:#5FC3B1;--teal2:#1F6F8B;--orange:#E8A04A;--gold:#E8A04A;--line:rgba(191,216,213,0.18);--glass:rgba(255,255,255,0.05);--green:#5FC3B1;--red:#F2A08E;--amber:#E8A04A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#0B1530;font-family:'IBM Plex Sans',Arial,sans-serif;color:var(--ink);font-size:15px}
+#stage{position:relative;min-height:100vh;background:linear-gradient(135deg,#0B1530 0%,#14213D 55%,#1B2E57 100%);display:grid;grid-template-rows:64px 1fr}
+#stage:before{content:"";position:fixed;right:0;top:0;width:60vw;height:60vw;background:radial-gradient(circle at 80% 15%,rgba(95,195,177,0.22),rgba(95,195,177,0) 60%);pointer-events:none}
+#stage:after{content:"";position:fixed;left:0;bottom:0;width:50vw;height:40vw;background:radial-gradient(circle at 10% 95%,rgba(232,160,74,0.16),rgba(232,160,74,0) 60%);pointer-events:none}
+.top{position:sticky;top:0;z-index:5;background:rgba(11,21,48,0.85);backdrop-filter:blur(8px);color:var(--paper);display:flex;align-items:center;padding:0 24px;gap:12px;font-size:14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.top:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,#1F6F8B,#5FC3B1 50%,#E8A04A)}
+.top b{font-family:'Domine',Georgia,serif;font-size:22px;margin-right:8px;color:#F7F6F2}
+.pill{background:var(--glass);border:1px solid var(--line);padding:5px 12px;border-radius:999px;font-size:13px;color:#BFD8D5;white-space:nowrap}
+.top .right{margin-left:auto;color:#BFD8D5}
+.body{display:grid;grid-template-columns:420px 1fr;position:relative;z-index:1}
+.list{border-right:1px solid var(--line);padding:22px;min-height:calc(100vh - 64px)}
+.list h2,.panel h3.sec{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:600}
+.list .hd{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.list .hd h2{margin:0;flex:1}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--glass);color:#F7F6F2;padding:7px 14px;border-radius:999px;font-weight:600;font-size:13px;transition:background .2s,border-color .2s}
+button:hover{border-color:var(--teal);background:rgba(95,195,177,0.12)}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:rgba(95,195,177,0.18);border-color:rgba(95,195,177,0.6);color:#BFE3DB}
+button.primary:hover{background:rgba(95,195,177,0.3)}
+button.approve{background:rgba(232,160,74,0.18);border-color:rgba(232,160,74,0.6);color:#F3C98B;font-size:15px;padding:10px 20px}
+button.approve:hover{background:rgba(232,160,74,0.32)}
+.inv{background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;cursor:pointer;transition:box-shadow .3s,border-color .3s,background .3s}
+.inv:hover{border-color:rgba(95,195,177,0.5)}
+.inv.sel{border-color:var(--teal);background:rgba(95,195,177,0.08);box-shadow:0 0 0 3px rgba(95,195,177,.15)}
+.inv .id{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+.inv .name{font-size:15px;font-weight:600;color:#F7F6F2}
+.inv .amt{font-size:14px;text-align:right;color:#F7F6F2;font-variant-numeric:tabular-nums}
+.inv .dir{font-size:12px;color:var(--muted);text-align:right}
+.badge{grid-column:1/3;justify-self:start;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.08);color:var(--muted);margin-top:4px}
+.badge.exec{background:rgba(95,195,177,0.18);color:#5FC3B1}.badge.held{background:rgba(242,160,142,0.18);color:#F2A08E}.badge.prep{background:rgba(232,160,74,0.18);color:#E8A04A}.badge.agreed{background:rgba(31,111,139,0.35);color:#9BD3E3}.badge.pend{background:rgba(255,255,255,0.08);color:var(--muted)}.badge.esc{background:rgba(242,160,142,0.18);color:#F2A08E}.badge.rec{background:rgba(31,111,139,0.35);color:#9BD3E3}
+.note{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:16px;line-height:1.5}
+.detail{padding:22px 28px;min-width:0}
+.tabs{display:flex;gap:6px;margin-bottom:18px}
+.tabs button{border-radius:8px}
+.tabs button.on{background:rgba(95,195,177,0.18);border-color:rgba(95,195,177,0.6);color:#BFE3DB}
+.panel{display:none}.panel.on{display:block}
+.panel h2{font-family:'Domine',Georgia,serif;font-size:28px;line-height:1.15;margin-bottom:6px;color:#F7F6F2}
+.panel .meta{color:var(--muted);font-size:14px;margin-bottom:18px;line-height:1.5}
+.sig{display:grid;grid-template-columns:60px 230px 1fr;gap:12px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:14px}
+.sig .w{font-family:'IBM Plex Mono',monospace;color:var(--orange);font-weight:500}
+.sig .c{font-family:'IBM Plex Mono',monospace;color:#9BD3E3}
+.sig .d{color:#BFD8D5}
+.score{display:flex;align-items:baseline;gap:12px;margin:14px 0 18px}
+.score .n{font-family:'Domine',Georgia,serif;font-size:44px;line-height:1;background:linear-gradient(90deg,#F7F6F2,#E8A04A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.score .l{font-size:14px;color:var(--muted)}
+.hs{display:grid;grid-template-columns:1fr 40px 1fr;gap:14px;align-items:center;margin-top:8px}
+.box{background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.box.dark{background:rgba(11,21,48,0.7);border-color:rgba(232,160,74,0.4)}
+.box h3{font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:600;color:var(--gold)}
+.box.light h3{color:var(--teal)}
+.box pre{font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.5;white-space:pre-wrap;color:#E6EEF2;word-break:break-word}
+.box p{font-size:14px;line-height:1.5;color:#E6EEF2}
+.arrow{font-size:28px;text-align:center;color:var(--orange)}
+.verdict{margin-top:16px;font-size:17px;font-weight:600;padding:12px 16px;border-radius:10px;border:1px solid transparent;line-height:1.4}
+.verdict.bad{background:rgba(242,160,142,0.14);color:#F2A08E;border-color:rgba(242,160,142,0.5)}.verdict.ok{background:rgba(95,195,177,0.14);color:#5FC3B1;border-color:rgba(95,195,177,0.5)}.verdict.warn{background:rgba(232,160,74,0.14);color:#E8A04A;border-color:rgba(232,160,74,0.5)}.verdict.info{background:rgba(31,111,139,0.25);color:#9BD3E3;border-color:rgba(31,111,139,0.6)}.verdict.pend{background:rgba(255,255,255,0.05);color:var(--muted);border-color:var(--line)}
+.msg{margin-top:12px;background:rgba(11,21,48,0.7);color:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.5}
+.msg .from{font-size:11px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.actions{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.timeline{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.step{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start}
+.step .who{font-size:13px;font-weight:600;color:var(--muted);padding-top:9px}
+.step .bub{background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;line-height:1.45;color:#E6EEF2}
+.step.me .bub{background:rgba(31,111,139,0.35);border-color:rgba(95,195,177,0.4);color:#F7F6F2}
+.step .bub code{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#BFE3DB}
+.log{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.5;background:rgba(5,12,30,0.85);color:#CFE0E5;border:1px solid var(--line);border-radius:12px;padding:16px;max-height:70vh;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.log .k{color:#E8A04A}.log .ev{color:#9BD3C1}.log .bad{color:#F2A08E}.log .ok{color:#9BD3C1}.log .h{color:#5B6F80}
+.chain{margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap}
+.chain .t{flex:1;min-width:160px;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:13px;color:#BFD8D5}
+.chain .t b{display:block;font-family:'Domine',Georgia,serif;font-size:24px;color:var(--teal)}
+.chain .t b.bad{color:#F2A08E}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:760px}
+.form label{display:flex;flex-direction:column;gap:6px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.form select,.form input{font:inherit;font-size:15px;color:#F7F6F2;background:rgba(5,12,30,0.6);border:1px solid var(--line);border-radius:8px;padding:9px 12px;letter-spacing:0;text-transform:none}
+.form select:focus,.form input:focus{outline:none;border-color:var(--teal)}
+.tiers{margin-top:18px;font-size:13px;color:#BFD8D5;line-height:1.7;max-width:760px}
+.tiers b{color:var(--gold)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(242,160,142,0.95);color:#0B1530;padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+#toast.show{opacity:1}
+.intro p{font-size:15px;line-height:1.6;color:#BFD8D5;max-width:720px;margin-bottom:10px}
+@media (max-width:900px){.body{grid-template-columns:1fr}.list{border-right:0;border-bottom:1px solid var(--line);min-height:0;padding:16px}.detail{padding:16px}.hs{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.sig{grid-template-columns:50px 1fr;grid-auto-rows:auto}.sig .d{grid-column:1/3}.top .right{margin-left:0}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="top"><b>Parapet</b><span class="pill">PT Sinar Kemasan · Jakarta</span><span class="pill" id="balance">Balance …</span><span class="pill" id="tierpill">Policy …</span><span class="right" id="today"></span></div>
+  <div class="body">
+    <div class="list">
+      <div class="hd"><h2>Today’s queue</h2><button class="primary" id="runall">Run all</button><button id="reset">Reset</button></div>
+      <div id="queue"></div>
+      <div class="note">Sandbox ledger. SUP-ANEKA’s mailbox is hijacked in this scenario.<br>Audit: evidence_live/audit_log.jsonl</div>
+    </div>
+    <div class="detail">
+      <div class="tabs"><button class="on" data-tab="invoice">Invoice</button><button data-tab="policy">Policy</button><button data-tab="audit">Audit log</button></div>
+
+      <div class="panel on" id="p-invoice">
+        <div class="intro" id="intro">
+          <h2>Five invoices. One click.</h2>
+          <div class="meta">Three supplier bills, two overdue customers. Payables at tier 3 (execute) with a per-transaction cap.</div>
+          <p>Press <b>Run all</b> to let Parapet work the queue, or click an invoice and run it on its own. Each decision shows the risk signals, the verification handshake with the counterparty’s agent, and the message sent to the owner.</p>
+          <p>Prepared payments wait for your one-tap approval. The Policy tab changes the tiers and caps for anything processed afterwards. The Audit log tab shows the hash-chained record.</p>
+        </div>
+        <div id="inv"></div>
+      </div>
+
+      <div class="panel" id="p-policy">
+        <h2>Permission policy</h2>
+        <div class="meta">Owner-set authority. Tiers only ever lower what the agent may do. A failed handshake is always held; risk at or above the threshold is always escalated.</div>
+        <form class="form" id="pform">
+          <label>Payables tier<select name="payable_tier" id="pt"></select></label>
+          <label>Receivables tier<select name="receivable_tier" id="rt"></select></label>
+          <label>Per-transaction cap (IDR)<input type="number" name="per_tx_cap" min="1" step="100000"></label>
+          <label>Daily cap (IDR)<input type="number" name="daily_cap" min="1" step="100000"></label>
+          <label>Risk hold threshold (0–1)<input type="number" name="risk_hold_threshold" min="0" max="1" step="0.05"></label>
+        </form>
+        <div class="actions"><button class="primary" id="psave">Save policy</button><span id="pmsg" class="meta" style="margin:0"></span></div>
+        <div class="tiers"><b>0 Observe</b> alert only · <b>1 Recommend</b> propose with reasons · <b>2 Prepare</b> draft, owner approves with one tap · <b>3 Execute</b> act within caps and below the risk threshold.<br>Changes apply to invoices processed after saving. Reset the queue to replay with a new policy.</div>
+      </div>
+
+      <div class="panel" id="p-audit">
+        <h2>Every step, hash-chained</h2>
+        <div class="meta">SHA-256 over each entry plus the previous hash. Tamper with one field and the chain breaks.</div>
+        <div class="chain" id="chain"></div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const idr=n=>'IDR '+Math.round(n).toLocaleString('en-US');
+const fdate=d=>new Date(d+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)};
+async function api(path,opts){
+  const r=await fetch(path,opts);const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(typeof j.detail==='string'?j.detail:r.statusText);return j;
+}
+const post=(p,body)=>api(p,{method:'POST',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});
+let selected=null,policy=null;
+
+const BADGE={executed:['exec','EXECUTED'],held:['held','HELD · no money moved'],prepared:['prep','PREPARED · owner approval'],escalated:['esc','ESCALATED'],recommended:['rec','RECOMMENDED'],pending:['pend','pending']};
+function badge(i){
+  let [cls,txt]=BADGE[i.status]||['pend',i.status];
+  if(i.status==='executed'&&i.transfer_id)txt+=' · '+i.transfer_id;
+  if(i.status==='executed'&&i.pay_by){cls='agreed';txt='AGREED · pay by '+fdate(i.pay_by)}
+  return `<div class="badge ${cls}">${esc(txt)}</div>`;
+}
+async function loadQueue(){
+  const q=await api('/queue');
+  $('#balance').textContent='Balance '+idr(q.balance);
+  $('#today').textContent=new Date(q.today+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+  $('#queue').innerHTML=q.invoices.map(i=>`<div class="inv${i.id===selected?' sel':''}" data-id="${esc(i.id)}">
+    <div class="id">${esc(i.id)}</div><div class="amt">${idr(i.amount)}</div>
+    <div class="name">${esc(i.counterparty)}</div><div class="dir">${i.direction}${i.direction==='receivable'?' · '+i.days_overdue+' days overdue':''}</div>${badge(i)}</div>`).join('');
+  $('#runall').disabled=!q.invoices.some(i=>i.status==='pending');
+}
+async function loadPolicy(){
+  policy=await api('/policy');
+  $('#tierpill').textContent=`Payables: Tier ${policy.payable_tier} ${cap(policy.payable_tier_name)} · cap ${Math.round(policy.per_tx_cap).toLocaleString('en-US')}`;
+  const opts=Object.entries(policy.tiers).map(([k,v])=>`<option value="${k}">${k} · ${cap(v)}</option>`).join('');
+  const f=$('#pform');f.payable_tier.innerHTML=f.receivable_tier.innerHTML=opts;
+  f.payable_tier.value=policy.payable_tier;f.receivable_tier.value=policy.receivable_tier;
+  f.per_tx_cap.value=policy.per_tx_cap;f.daily_cap.value=policy.daily_cap;f.risk_hold_threshold.value=policy.risk_hold_threshold;
+}
+const cap=s=>s[0]+s.slice(1).toLowerCase();
+
+function handshakeHtml(d){
+  const sent=d.handshake.find(e=>e.event==='handshake.challenge_sent'),res=d.handshake.find(e=>e.event==='handshake.result');
+  if(!sent)return '';
+  const reply=res?`<pre>“${esc(res.counterparty_note)}”\n\nattested_claim   ${res.attested_claim}\nsignature_valid  <b style="color:${res.signature_valid?'#5FC3B1':'#F2A08E'}">${res.signature_valid}</b></pre>`
+    :`<pre>No counterparty agent available to answer.\n\nsignature_valid  <b style="color:#F2A08E">false</b></pre>`;
+  return `<h3 class="sec" style="margin-top:6px">Counterparty verification</h3><div class="hs">
+    <div class="box dark"><h3>Parapet challenges the supplier’s agent</h3><pre>invoice  ${esc(d.invoice.id)}\namount   ${idr(d.invoice.amount)}\naccount  ${esc(sent.account)}\nnonce    ${esc(sent.nonce)}\nsign this with the onboarding key</pre></div>
+    <div class="arrow">⇄</div>
+    <div class="box light"><h3>Reply from the supplier’s agent</h3>${reply}</div></div>`;
+}
+function negotiationHtml(d){
+  if(!d.negotiation.length)return '';
+  const steps=d.negotiation.map(e=>{
+    if(e.event==='negotiation.proposal')return `<div class="step me"><div class="who">Parapet</div><div class="bub">Round ${e.round}: settlement proposal, full amount ${idr(e.amount)}, pay by <b>${fdate(e.pay_by)}</b>.</div></div>`;
+    if(e.event==='negotiation.counter')return `<div class="step"><div class="who">Buyer’s agent</div><div class="bub">${esc(e.note)} Counter signed.</div></div>`;
+    if(e.event==='negotiation.agreed')return `<div class="step me"><div class="who">Parapet</div><div class="bub">Accepting ${fdate(e.terms.pay_by)}. Terms locked with buyer signature <code>${esc(e.terms.buyer_signature.slice(0,16))}…</code></div></div>`;
+    return `<div class="step"><div class="who">Buyer’s agent</div><div class="bub">No valid signed response.</div></div>`;
+  }).join('');
+  return `<h3 class="sec" style="margin-top:6px">Settlement negotiation</h3><div class="timeline">${steps}</div>`;
+}
+const VCLS={executed:'ok',prepared:'warn',held:'bad',escalated:'bad',recommended:'info'};
+async function loadInvoice(id){
+  selected=id;document.querySelectorAll('.inv').forEach(e=>e.classList.toggle('sel',e.dataset.id===id));
+  showTab('invoice');$('#intro').style.display='none';
+  const d=await api('/invoice/'+id),i=d.invoice,o=d.outcome;
+  const meta=i.direction==='payable'
+    ?`${idr(i.amount)} · payable · sent from ${esc(i.sender_domain)} · asks for ${esc(i.payout_account)} · registered ${esc(i.registered_account)}`
+    :`${idr(i.amount)} · receivable · ${i.days_overdue} days overdue · pays on time ${Math.round(i.paid_on_time_ratio*100)}% of the time`;
+  let h=`<h2>${esc(i.counterparty)} · ${esc(i.description)}</h2><div class="meta">${meta}</div>`;
+  if(i.body_text)h+=`<div class="box"><h3>Invoice email</h3><p>${esc(i.body_text)}</p></div>`;
+  if(!o){
+    h+=`<div class="verdict pend">Not processed yet.</div><div class="actions"><button class="primary" id="runone">Run this invoice</button></div>`;
+  }else{
+    h+=`<h3 class="sec">Risk signals</h3>`;
+    h+=d.signals.length?d.signals.map(s=>`<div class="sig"><span class="w">+${s.weight.toFixed(2)}</span><span class="c">${esc(s.code)}</span><span class="d">${esc(s.detail)}</span></div>`).join('')
+      :`<div class="sig"><span class="w">0.00</span><span class="c">CLEAN</span><span class="d">No risk signals detected.</span></div>`;
+    h+=`<div class="score"><span class="n">${o.risk_score.toFixed(2)}</span><span class="l">risk score · hold threshold ${policy.risk_hold_threshold.toFixed(2)}</span></div>`;
+    h+=i.direction==='payable'?handshakeHtml(d):negotiationHtml(d);
+    h+=`<div class="verdict ${VCLS[o.decision]||'info'}">${esc(o.decision.toUpperCase())} · ${esc(o.reason)}</div>`;
+    h+=`<div class="msg"><div class="from">Message to owner</div>${esc(o.message)}</div>`;
+    if(o.decision==='prepared')h+=`<div class="actions"><button class="approve" id="approve">Approve ${i.direction==='payable'?'payment of '+idr(i.amount):'settlement terms'}</button><span class="meta" style="margin:0">One tap. Logged as owner.approved.</span></div>`;
+  }
+  $('#inv').innerHTML=h;
+  const r=$('#runone');if(r)r.onclick=()=>act(()=>post(`/invoice/${id}/run`),id);
+  const a=$('#approve');if(a)a.onclick=()=>act(()=>post(`/invoice/${id}/approve`),id);
+}
+async function act(fn,reload){
+  try{await fn();await loadQueue();if(reload)await loadInvoice(reload);}catch(e){toast(e.message)}
+}
+function showTab(name){
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p-'+name));
+  if(name==='audit')loadAudit();
+}
+const SKIP=new Set(['seq','ts','event','prev_hash','hash']);
+function fval(k,v){
+  if(k==='signals')return '['+v.map(s=>s.code).join(', ')+']';
+  if(v&&typeof v==='object')v=JSON.stringify(v);
+  if(typeof v==='string'){if(v.length>90)v=v.slice(0,90)+'…';return JSON.stringify(v)}
+  if(v===true)return '<span class="ok">true</span>';if(v===false)return '<span class="bad">false</span>';
+  return String(v);
+}
+async function loadAudit(){
+  const a=await api('/audit');
+  $('#chain').innerHTML=`<div class="t"><b class="${a.chain_valid?'':'bad'}">chain valid: ${a.chain_valid}</b>verify_chain() over ${a.entries.length} entries</div>
+    <div class="t"><b>${a.entries.length}</b>entries</div><div class="t"><b>LLM: 0 decisions</b>the model explains, the policy engine decides</div>`;
+  $('#log').innerHTML=a.entries.map(e=>`<span class="k">${String(e.seq).padStart(3,'0')}</span>  <span class="ev">${esc(e.event).padEnd(32)}</span>${Object.entries(e).filter(([k])=>!SKIP.has(k)).map(([k,v])=>`${esc(k)}=${fval(k,v)}`).join(' ')}  <span class="h">${e.hash.slice(0,12)}</span>`).join('\n');
+}
+$('#queue').addEventListener('click',e=>{const r=e.target.closest('.inv');if(r)loadInvoice(r.dataset.id).catch(x=>toast(x.message))});
+$('#runall').onclick=()=>act(()=>post('/run'),selected);
+$('#reset').onclick=()=>act(async()=>{await post('/reset');selected=null;$('#inv').innerHTML='';$('#intro').style.display='';showTab('invoice');await loadPolicy()});
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$('#psave').onclick=async()=>{
+  const f=$('#pform'),body={};
+  for(const el of f.elements){if(el.name)body[el.name]=Number(el.value)}
+  try{await post('/policy',body);await loadPolicy();$('#pmsg').textContent='Saved. Applies to invoices processed from now on.';}catch(e){toast(e.message)}
+};
+(async()=>{try{await loadPolicy();await loadQueue();}catch(e){toast('Cannot reach the API: '+e.message)}})();
+</script>
+</body>
+</html>
