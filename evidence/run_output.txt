@@ -1,0 +1,5 @@
+INV-TINTA-0931   payable    executed     risk=0.00  Within tier, caps and risk threshold.
+INV-ANEKA-2210   payable    held         risk=0.90  Counterparty verification failed.
+INV-KEMAS-0788   payable    prepared     risk=0.55  Payee verified by handshake, but risk signals remain; owner approval required.
+INV-OUT-5120     receivable executed     risk=0.45  Settlement agreed and signed by buyer: pay by 2026-11-01.
+INV-OUT-5133     receivable executed     risk=0.05  Settlement agreed and signed by buyer: pay by 2026-10-23.

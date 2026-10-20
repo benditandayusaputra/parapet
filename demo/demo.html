@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Parapet demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--navy:#14213D;--navy2:#1E2F55;--paper:#F7F6F2;--ink:#14213D;--muted:#6A7179;--teal:#1F6F8B;--orange:#D97B2B;--gold:#E8A04A;--line:#DDD9CF;--green:#2E7D5B;--red:#B3422F}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--paper);font-family:'IBM Plex Sans',Arial,sans-serif;color:var(--ink)}
+#stage{position:relative;width:1920px;height:1080px}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none}
+.scene.on{opacity:1}
+.card{position:absolute;inset:0;background:var(--navy);color:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:160px}
+.card .eyebrow{color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-weight:600;font-size:26px;margin-bottom:28px}
+.card h1{font-family:'Domine',Georgia,serif;font-size:150px;line-height:1}
+.card .sub{font-size:48px;color:#BFD8D5;margin-top:28px;max-width:1400px;line-height:1.25}
+.card .foot{position:absolute;left:160px;bottom:140px;font-size:24px;color:#8FA3B0}
+.app{position:absolute;inset:0;display:grid;grid-template-rows:88px 1fr;}
+.top{background:var(--navy);color:var(--paper);display:flex;align-items:center;padding:0 48px;gap:24px;font-size:24px}
+.top b{font-family:'Domine',Georgia,serif;font-size:30px;margin-right:16px}
+.top .pill{background:var(--navy2);padding:8px 16px;border-radius:999px;font-size:20px;color:#BFD8D5}
+.top .right{margin-left:auto;color:#BFD8D5}
+.body{display:grid;grid-template-columns:760px 1fr;gap:0;height:100%}
+.list{border-right:1px solid var(--line);padding:32px;overflow:hidden}
+.list h2{font-size:22px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:600}
+.inv{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;transition:box-shadow .3s,border-color .3s}
+.inv.sel{border-color:var(--navy);box-shadow:0 0 0 3px rgba(20,33,61,.12)}
+.inv .id{font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--muted)}
+.inv .name{font-size:24px;font-weight:600}
+.inv .amt{font-size:22px;text-align:right}
+.inv .dir{font-size:18px;color:var(--muted);text-align:right}
+.badge{grid-column:1/3;justify-self:start;font-size:18px;font-weight:600;padding:5px 12px;border-radius:999px;background:#EEE;color:var(--muted);opacity:0;transform:translateY(4px);transition:all .35s}
+.badge.show{opacity:1;transform:none}
+.badge.exec{background:#DDEFE6;color:var(--green)}.badge.held{background:#F6DED8;color:var(--red)}.badge.prep{background:#FBEBD6;color:#9A5516}.badge.agreed{background:#DCE9EF;color:var(--teal)}.badge.pend{background:#EEE;color:var(--muted)}
+.detail{padding:36px 48px;overflow:hidden;position:relative}
+.panel{position:absolute;inset:36px 48px;opacity:0;transition:opacity .45s}
+.panel.on{opacity:1}
+.panel h2{font-family:'Domine',Georgia,serif;font-size:46px;line-height:1.1;margin-bottom:8px}
+.panel .meta{color:var(--muted);font-size:22px;margin-bottom:28px}
+.sig{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:10px;opacity:0;transform:translateX(-10px);transition:all .4s;font-size:24px}
+.sig.show{opacity:1;transform:none}
+.sig .w{font-family:'IBM Plex Mono',monospace;color:var(--orange);font-weight:500;min-width:90px}
+.sig .c{font-family:'IBM Plex Mono',monospace;color:var(--navy);min-width:330px}
+.sig .d{color:#4A5568}
+.score{display:flex;align-items:baseline;gap:16px;margin:18px 0 26px}
+.score .n{font-family:'Domine',Georgia,serif;font-size:72px;line-height:1}
+.score .l{font-size:22px;color:var(--muted)}
+.hs{display:grid;grid-template-columns:1fr 60px 1fr;gap:20px;align-items:center;margin-top:10px}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px;opacity:0;transition:opacity .45s}
+.box.show{opacity:1}
+.box.dark{background:var(--navy);color:var(--paper);border-color:var(--navy)}
+.box h3{font-size:22px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600;color:var(--gold)}
+.box.light h3{color:var(--teal)}
+.box pre{font-family:'IBM Plex Mono',monospace;font-size:22px;line-height:1.5;white-space:pre-wrap}
+.arrow{font-size:44px;text-align:center;color:var(--orange);opacity:0;transition:opacity .4s}.arrow.show{opacity:1}
+.verdict{margin-top:24px;font-size:30px;font-weight:600;padding:18px 24px;border-radius:14px;opacity:0;transition:opacity .45s}
+.verdict.show{opacity:1}
+.verdict.bad{background:#F6DED8;color:var(--red)}.verdict.ok{background:#DDEFE6;color:var(--green)}.verdict.warn{background:#FBEBD6;color:#9A5516}
+.msg{margin-top:18px;background:var(--navy);color:var(--paper);border-radius:14px;padding:20px 24px;font-size:24px;line-height:1.45;opacity:0;transition:opacity .45s}
+.msg.show{opacity:1}
+.msg .from{font-size:18px;color:#BFD8D5;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.timeline{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.step{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start;opacity:0;transform:translateY(6px);transition:all .4s}
+.step.show{opacity:1;transform:none}
+.step .who{font-size:20px;font-weight:600;color:var(--muted);padding-top:12px}
+.step .bub{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:24px;line-height:1.4}
+.step.me .bub{background:var(--navy);color:var(--paper);border-color:var(--navy)}
+.step .bub code{font-family:'IBM Plex Mono',monospace;font-size:20px;color:#BFD8D5}
+.log{font-family:'IBM Plex Mono',monospace;font-size:19px;line-height:1.45;background:#0F1A33;color:#CFE0E5;border-radius:14px;padding:22px;height:620px;overflow:hidden;white-space:pre-wrap}
+.log .k{color:#E8A04A}.log .ev{color:#9BD3C1}.log .bad{color:#F2A08E}.log .ok{color:#9BD3C1}
+.chain{margin-top:16px;display:flex;gap:16px}
+.chain .t{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;font-size:24px;opacity:0;transition:opacity .45s}
+.chain .t.show{opacity:1}
+.chain .t b{display:block;font-family:'Domine',Georgia,serif;font-size:40px;color:var(--green)}
+#cap{position:absolute;left:0;right:0;bottom:0;height:120px;background:rgba(20,33,61,.96);color:#F7F6F2;display:flex;align-items:center;justify-content:center;padding:0 160px;font-size:30px;line-height:1.35;text-align:center;opacity:0;transition:opacity .3s}
+#cap.show{opacity:1}
+#cursor{position:absolute;width:22px;height:22px;border-radius:50%;background:rgba(217,123,43,.85);box-shadow:0 0 0 6px rgba(217,123,43,.25);pointer-events:none;transition:left .6s ease,top .6s ease;opacity:0}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<div class="scene on" id="s-title">
+  <div class="card">
+    <div class="eyebrow">2026 Shenzhen International FinTechathon · Topic E · SME Finance Copilot</div>
+    <h1>Parapet</h1>
+    <div class="sub">Collects what your business is owed. Refuses to pay what it does not owe.</div>
+    <div class="foot">Team Oneshot · Bendi Tandayu Saputra, Made Kevin Darmawan, Aqsha Lathif Imron, Nawal Alhamid</div>
+  </div>
+</div>
+
+<div class="scene" id="s-app">
+  <div class="app">
+    <div class="top"><b>Parapet</b><span class="pill">PT Sinar Kemasan · Jakarta</span><span class="pill">Balance IDR 85,000,000</span><span class="pill" id="tierpill">Payables: Tier 3 Execute · cap 25,000,000</span><span class="right">Tuesday 20 Oct 2026</span></div>
+    <div class="body">
+      <div class="list">
+        <h2>Today’s queue</h2>
+        <div class="inv" id="r1"><div class="id">INV-TINTA-0931</div><div class="amt">IDR 4,250,000</div><div class="name">CV Tinta Nusantara</div><div class="dir">payable</div><div class="badge pend" id="b1">pending</div></div>
+        <div class="inv" id="r2"><div class="id">INV-ANEKA-2210</div><div class="amt">IDR 24,600,000</div><div class="name">PT Aneka Karton</div><div class="dir">payable</div><div class="badge pend" id="b2">pending</div></div>
+        <div class="inv" id="r3"><div class="id">INV-KEMAS-0788</div><div class="amt">IDR 7,100,000</div><div class="name">PT Kemas Lestari</div><div class="dir">payable</div><div class="badge pend" id="b3">pending</div></div>
+        <div class="inv" id="r4"><div class="id">INV-OUT-5120</div><div class="amt">IDR 9,800,000</div><div class="name">Warung Kopi Sejahtera</div><div class="dir">receivable · 24 days overdue</div><div class="badge pend" id="b4">pending</div></div>
+        <div class="inv" id="r5"><div class="id">INV-OUT-5133</div><div class="amt">IDR 6,400,000</div><div class="name">Roti Pagi Bakery</div><div class="dir">receivable · 5 days overdue</div><div class="badge pend" id="b5">pending</div></div>
+      </div>
+      <div class="detail">
+
+        <div class="panel" id="p-intro">
+          <h2>Five invoices. One command.</h2>
+          <div class="meta">python -m parapet.cli --out evidence --today 2026-10-20</div>
+          <div class="box light show" style="opacity:1"><pre id="runout"></pre></div>
+        </div>
+
+        <div class="panel" id="p-aneka">
+          <h2>PT Aneka Karton · “updated bank details”</h2>
+          <div class="meta">IDR 24,600,000 · sent from anekakarton.co.id · asks for CIMB ****9988 · registered BCA ****1234</div>
+          <div class="sig" id="a1"><span class="w">+0.45</span><span class="c">ACCOUNT_CHANGED</span><span class="d">Invoice asks for CIMB ****9988, registered is BCA ****1234</span></div>
+          <div class="sig" id="a2"><span class="w">+0.15</span><span class="c">AMOUNT_ANOMALY</span><span class="d">2.1x the historical average for this payee</span></div>
+          <div class="sig" id="a3"><span class="w">+0.20</span><span class="c">URGENCY_LANGUAGE</span><span class="d">“urgent”, “today”, “do not call the office”</span></div>
+          <div class="sig" id="a4"><span class="w">+0.10</span><span class="c">ACCOUNT_CHANGE_LANGUAGE</span><span class="d">Message announces new banking details</span></div>
+          <div class="score"><span class="n" id="ascore">0.00</span><span class="l">risk score · hold threshold 0.45</span></div>
+          <div class="hs">
+            <div class="box dark" id="h1"><h3>Parapet challenges the supplier’s agent</h3><pre>invoice  INV-ANEKA-2210
+amount   IDR 24,600,000
+account  CIMB ****9988
+nonce    bb2137bc77de6075
+sign this with the onboarding key</pre></div>
+            <div class="arrow" id="h2">⇄</div>
+            <div class="box light" id="h3"><h3>Reply from the hijacked mailbox</h3><pre>“Yes confirmed, please pay
+urgently to the new account.”
+
+attested_claim   true
+signature_valid  <b style="color:#B3422F">false</b></pre></div>
+          </div>
+          <div class="verdict bad" id="h4">HELD · no money moved · payee frozen until confirmed by phone on the number on file</div>
+        </div>
+
+        <div class="panel" id="p-kemas">
+          <h2>PT Kemas Lestari · a genuine bank change</h2>
+          <div class="meta">IDR 7,100,000 · asks for BCA ****3322 · registered Permata ****9876 · same signals fire</div>
+          <div class="sig show" style="opacity:1;transform:none"><span class="w">+0.45</span><span class="c">ACCOUNT_CHANGED</span><span class="d">Invoice asks for BCA ****3322, registered is Permata ****9876</span></div>
+          <div class="sig show" style="opacity:1;transform:none"><span class="w">+0.10</span><span class="c">ACCOUNT_CHANGE_LANGUAGE</span><span class="d">Message announces new banking details</span></div>
+          <div class="score"><span class="n">0.55</span><span class="l">risk score · above threshold</span></div>
+          <div class="hs">
+            <div class="box dark" id="k1"><h3>Challenge</h3><pre>invoice  INV-KEMAS-0788
+account  BCA ****3322
+nonce    ea3fb8cb769989d1</pre></div>
+            <div class="arrow" id="k2">⇄</div>
+            <div class="box light" id="k3"><h3>Reply from the supplier’s agent</h3><pre>“Attested.”
+
+attested_claim   true
+signature_valid  <b style="color:#2E7D5B">true</b></pre></div>
+          </div>
+          <div class="verdict warn" id="k4">PREPARED · payee verified, risk signals remain · one-tap owner approval</div>
+          <div class="msg" id="k5"><div class="from">Message to owner</div>Ready for your approval: Plastic film, October (IDR 7,100,000). Payee verified by handshake, but risk signals remain. Why: account changed from Permata ****9876 to BCA ****3322; message announces new banking details.</div>
+        </div>
+
+        <div class="panel" id="p-warung">
+          <h2>Warung Kopi Sejahtera · 24 days overdue</h2>
+          <div class="meta">IDR 9,800,000 · pays on time 60% of the time · risk 0.45 · owner ceiling 14 days</div>
+          <div class="timeline">
+            <div class="step me" id="n1"><div class="who">Parapet</div><div class="bub">Settlement proposal: full amount IDR 9,800,000, pay by <b>23 Oct 2026</b>. <code>nonce 2a92dcde…</code></div></div>
+            <div class="step" id="n2"><div class="who">Buyer’s agent</div><div class="bub">Cannot pay by 23 Oct; earliest is <b>1 Nov 2026</b>. Counter signed.</div></div>
+            <div class="step me" id="n3"><div class="who">Parapet</div><div class="bub">1 Nov is inside the 14-day ceiling. Accepting. Terms locked with buyer signature <code>8ac53a9823c0f680…</code></div></div>
+          </div>
+          <div class="verdict ok" id="n4">AGREED · pay by 2026-11-01 · non-repudiable</div>
+          <div class="msg" id="n5"><div class="from">Message to owner</div>Done: Cup sleeves and boxes, September (IDR 9,800,000). Settlement agreed and signed by buyer: pay by 2026-11-01. Why: 24 days past due; paid on time 60% of the time.</div>
+        </div>
+
+        <div class="panel" id="p-audit">
+          <h2>Every step, hash-chained</h2>
+          <div class="meta">evidence/audit_log.jsonl · 31 entries · SHA-256 chain</div>
+          <div class="log" id="log"></div>
+          <div class="chain">
+            <div class="t" id="c1"><b>chain valid: true</b>tamper one field and verify_chain() fails</div>
+            <div class="t" id="c2"><b>12 tests OK</b>fraud hold · caps · tiers · negotiation · tamper detection</div>
+            <div class="t" id="c3"><b>LLM: 0 decisions</b>the model explains, the policy engine decides</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scene" id="s-end">
+  <div class="card">
+    <div class="eyebrow">Parapet · Team Oneshot</div>
+    <h1 style="font-size:110px">Collects what you are owed.<br>Refuses to pay what you do not owe.</h1>
+    <div class="sub">One agent, both directions of cash, one verification protocol, an audit trail a bank can read.</div>
+    <div class="foot">github.com/benditandayusaputra/parapet</div>
+  </div>
+</div>
+
+<div id="cursor"></div>
+<div id="cap"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const on=(s)=>$(s).classList.add('on'), off=(s)=>$(s).classList.remove('on');
+const show=(s)=>$(s).classList.add('show');
+const cap=t=>{const c=$('#cap');c.classList.remove('show');setTimeout(()=>{c.textContent=t;c.classList.add('show')},250)};
+const badge=(n,cls,t)=>{const b=$('#b'+n);b.className='badge '+cls+' show';b.textContent=t};
+const sel=n=>{document.querySelectorAll('.inv').forEach(e=>e.classList.remove('sel'));$('#r'+n).classList.add('sel')};
+const panel=id=>{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));on(id)};
+const cur=(x,y)=>{const c=$('#cursor');c.style.opacity=1;c.style.left=(x-11)+'px';c.style.top=(y-11)+'px'};
+const RUN=[
+"INV-TINTA-0931   payable    executed     risk=0.00  Within tier, caps and risk threshold.",
+"INV-ANEKA-2210   payable    held         risk=0.90  Counterparty verification failed.",
+"INV-KEMAS-0788   payable    prepared     risk=0.55  Payee verified by handshake, but risk signals remain; owner approval required.",
+"INV-OUT-5120     receivable executed     risk=0.45  Settlement agreed and signed by buyer: pay by 2026-11-01.",
+"INV-OUT-5133     receivable executed     risk=0.05  Settlement agreed and signed by buyer: pay by 2026-10-23."];
+const LOG=[
+['payable.received','invoice=INV-ANEKA-2210 amount=24600000 payout_account="CIMB ****9988"'],
+['payable.risk_scored','invoice=INV-ANEKA-2210 score=0.9 signals=[ACCOUNT_CHANGED, AMOUNT_ANOMALY, URGENCY_LANGUAGE, ACCOUNT_CHANGE_LANGUAGE]'],
+['handshake.challenge_sent','invoice=INV-ANEKA-2210 account="CIMB ****9988" nonce=bb2137bc77de6075'],
+['handshake.result','invoice=INV-ANEKA-2210 attested_claim=true signature_valid=<span class="bad">false</span>'],
+['payable.held','invoice=INV-ANEKA-2210 reason="Counterparty verification failed."'],
+['handshake.challenge_sent','invoice=INV-KEMAS-0788 account="BCA ****3322" nonce=ea3fb8cb769989d1'],
+['handshake.result','invoice=INV-KEMAS-0788 attested_claim=true signature_valid=<span class="ok">true</span>'],
+['negotiation.proposal','invoice=INV-OUT-5120 round=1 pay_by=2026-10-23'],
+['negotiation.counter','invoice=INV-OUT-5120 round=1 counter_pay_by=2026-11-01'],
+['negotiation.agreed','invoice=INV-OUT-5120 terms.pay_by=2026-11-01 buyer_signature=8ac53a98…'],
+['session.end','balance=80750000 transfers=1 chain_valid=<span class="ok">true</span>']];
+const T=[];let t=0;const at=(d,f)=>{t+=d;T.push([t,f])};
+// ---- timeline (seconds) ----
+at(0.5,()=>cap("This is Parapet, an AI finance agent for small businesses. It collects what the business is owed, and refuses to pay what it does not owe."));
+at(7,()=>cap("Both come from one engine. Let me show you a real morning for a Jakarta packaging company."));
+at(5,()=>{off('#s-title');on('#s-app');panel('#p-intro');cap("Five invoices in the queue. Three supplier bills, two overdue customers. The owner set payables to tier 3, execute, with a 25 million rupiah cap.")});
+at(8,()=>cap("One of the supplier bills is a trap: the supplier's mailbox was hijacked and the attacker sent new bank details with a lot of urgency."));
+at(7,()=>{cap("One command. Five invoices, five decisions, in under a second.");cur(1100,330)});
+at(2,()=>{$('#runout').textContent=RUN[0];badge(1,'exec','EXECUTED · TX-0001')});
+at(1.2,()=>{$('#runout').textContent+='\n'+RUN[1];badge(2,'held','HELD · no money moved')});
+at(1.2,()=>{$('#runout').textContent+='\n'+RUN[2];badge(3,'prep','PREPARED · owner approval')});
+at(1.2,()=>{$('#runout').textContent+='\n'+RUN[3];badge(4,'agreed','AGREED · pay by 1 Nov')});
+at(1.2,()=>{$('#runout').textContent+='\n'+RUN[4];badge(5,'agreed','AGREED · pay by 23 Oct')});
+at(2,()=>cap("The honest ink invoice: paid. The hijacked carton invoice: held. A supplier that really moved banks: prepared for one tap. Both overdue customers: settlement agreed and signed."));
+at(9,()=>{sel(2);panel('#p-aneka');cur(400,330);cap("Here is the trap. Before talking to anyone, the agent found four signals.")});
+at(3,()=>{show('#a1');$('#ascore').textContent='0.45'});
+at(2.2,()=>{show('#a2');$('#ascore').textContent='0.60';cap("The account is not the registered one. The amount is 2.1 times what this supplier normally bills.")});
+at(3.5,()=>{show('#a3');$('#ascore').textContent='0.80'});
+at(1.5,()=>{show('#a4');$('#ascore').textContent='0.90';cap("Four pressure phrases, including 'do not call the office', and an announcement of new bank details. Risk 0.90.")});
+at(6,()=>{show('#h1');cap("But the score is not what stopped the payment. This is. Because the account changed, Parapet challenged the supplier's agent to sign the exact payment details plus a random nonce.")});
+at(8,()=>{show('#h2');show('#h3');cap("The attacker replied: yes, confirmed, pay urgently. They control the mailbox. They never had the key. The signature fails.")});
+at(7,()=>{show('#h4');cap("Payment held. No money moved. The owner is told to phone the supplier on the number on file, not the one in the email.")});
+at(8,()=>{sel(3);panel('#p-kemas');cap("This is what makes it usable instead of annoying. Kemas Lestari really did move banks. Same signals fire.")});
+at(6,()=>{show('#k1');show('#k2');show('#k3');cap("But their agent signed the challenge correctly. Signature valid.")});
+at(5,()=>{show('#k4');cap("So instead of a hold, the agent prepares the payment and asks the owner for one tap. Verified, but still a human decision while risk signals remain.")});
+at(7,()=>{show('#k5');cap("A guardian that only ever blocks gets switched off in a week. Parapet is built to earn the tier it is given.")});
+at(7,()=>{sel(4);panel('#p-warung');cap("Now money in. Warung Kopi Sejahtera is 24 days late and pays on time only 60 percent of the time.")});
+at(5,()=>{show('#n1');cap("Parapet opens firm: full amount, pay within three days.")});
+at(4,()=>{show('#n2');cap("The buyer's agent counters with the first of November, and signs the counter.")});
+at(4.5,()=>{show('#n3');cap("That is inside the owner's 14-day ceiling, so Parapet accepts and locks it. The buyer cannot later say they never agreed.")});
+at(6,()=>{show('#n4');show('#n5');cap("Same protocol as the fraud check, pointed the other way. Had they refused, this receivable would be escalated for invoice financing, because its risk crossed the threshold.")});
+at(8,()=>{panel('#p-audit');document.querySelectorAll('.inv').forEach(e=>e.classList.remove('sel'));cap("Every observation, every handshake, every decision is written to a hash-chained audit log.")});
+LOG.forEach((l,i)=>at(i?0.55:1.5,()=>{$('#log').innerHTML+=`<span class="k">${String(i+1).padStart(2,'0')}</span>  <span class="ev">${l[0].padEnd(26)}</span>${l[1]}\n`}));
+at(1.5,()=>{show('#c1');cap("Change one field and the chain breaks; there is a test for that.")});
+at(3.5,()=>{show('#c2');cap("Twelve tests cover the fraud hold, the caps, the tiers, the negotiation, and tamper detection.")});
+at(4.5,()=>{show('#c3');cap("And the language model never makes a decision. It only explains one that the policy engine already made.")});
+at(6.5,()=>{off('#s-app');on('#s-end');$('#cursor').style.opacity=0;cap("Parapet. One agent, both directions of cash, one verification protocol, and an audit trail a bank can read. Thank you.")});
+at(8,()=>{$('#cap').classList.remove('show')});
+at(2,()=>{document.title='DONE'});
+window.addEventListener('load',()=>{T.forEach(([s,f])=>setTimeout(f,s*1000));});
+</script>
+</body>
+</html>

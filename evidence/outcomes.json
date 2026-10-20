@@ -1,0 +1,68 @@
+[
+  {
+    "invoice_id": "INV-TINTA-0931",
+    "direction": "payable",
+    "decision": "executed",
+    "reason": "Within tier, caps and risk threshold.",
+    "risk_score": 0,
+    "message": "Done: Ink cartridges, October (IDR 4,250,000). Within tier, caps and risk threshold. Transfer TX-0001 to Mandiri ****8765.",
+    "transfer_id": "TX-0001",
+    "agreed_terms": null
+  },
+  {
+    "invoice_id": "INV-ANEKA-2210",
+    "direction": "payable",
+    "decision": "held",
+    "reason": "Counterparty verification failed.",
+    "risk_score": 0.9,
+    "message": "Payment held: Carton stock, October (IDR 24,600,000). Counterparty verification failed. Why: ACCOUNT_CHANGED (+0.45): Invoice asks for CIMB ****9988, registered is BCA ****1234.; AMOUNT_ANOMALY (+0.15): Amount is 2.1x the historical average for this payee.; URGENCY_LANGUAGE (+0.20): Pressure phrases: 4.; ACCOUNT_CHANGE_LANGUAGE (+0.10): Message announces new banking details. No money moved. I have frozen this payee until you confirm by phone using the number on file.",
+    "transfer_id": null,
+    "agreed_terms": null
+  },
+  {
+    "invoice_id": "INV-KEMAS-0788",
+    "direction": "payable",
+    "decision": "prepared",
+    "reason": "Payee verified by handshake, but risk signals remain; owner approval required.",
+    "risk_score": 0.55,
+    "message": "Ready for your approval: Plastic film, October (IDR 7,100,000). Payee verified by handshake, but risk signals remain; owner approval required. Why: ACCOUNT_CHANGED (+0.45): Invoice asks for BCA ****3322, registered is Permata ****9876.; ACCOUNT_CHANGE_LANGUAGE (+0.10): Message announces new banking details.",
+    "transfer_id": null,
+    "agreed_terms": null
+  },
+  {
+    "invoice_id": "INV-OUT-5120",
+    "direction": "receivable",
+    "decision": "executed",
+    "reason": "Settlement agreed and signed by buyer: pay by 2026-11-01.",
+    "risk_score": 0.45,
+    "message": "Done: Cup sleeves and boxes, September (IDR 9,800,000). Settlement agreed and signed by buyer: pay by 2026-11-01. Why: OVERDUE (+0.20): 24 days past due.; POOR_HISTORY (+0.25): Paid on time 60% of the time.",
+    "transfer_id": null,
+    "agreed_terms": {
+      "type": "settlement",
+      "invoice_id": "INV-OUT-5120",
+      "amount": 9800000,
+      "currency": "IDR",
+      "pay_by": "2026-11-01",
+      "nonce": "2a92dcdefbfa819e",
+      "buyer_signature": "8ac53a9823c0f680ed597bd0cf596d333622ff12f0ad932bc25c895850eaab06"
+    }
+  },
+  {
+    "invoice_id": "INV-OUT-5133",
+    "direction": "receivable",
+    "decision": "executed",
+    "reason": "Settlement agreed and signed by buyer: pay by 2026-10-23.",
+    "risk_score": 0.05,
+    "message": "Done: Bread bags, September (IDR 6,400,000). Settlement agreed and signed by buyer: pay by 2026-10-23. Why: OVERDUE (+0.05): 5 days past due.",
+    "transfer_id": null,
+    "agreed_terms": {
+      "type": "settlement",
+      "invoice_id": "INV-OUT-5133",
+      "amount": 6400000,
+      "currency": "IDR",
+      "pay_by": "2026-10-23",
+      "nonce": "2ee5166163672a30",
+      "buyer_signature": "993efcc0e7310bfa9fd05e4f1173fd7af1033c745f4d95aacf3268a3ac1aa5eb"
+    }
+  }
+]

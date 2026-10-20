@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+demo/_rec/
+demo/_frames/

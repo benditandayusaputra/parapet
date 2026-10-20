@@ -1,0 +1,17 @@
+test_chain_is_valid_and_detects_tampering (test_parapet.AuditTests.test_chain_is_valid_and_detects_tampering) ... ok
+test_bec_invoice_is_held_and_no_money_moves (test_parapet.PayableTests.test_bec_invoice_is_held_and_no_money_moves) ... ok
+test_clean_invoice_is_executed_within_caps (test_parapet.PayableTests.test_clean_invoice_is_executed_within_caps) ... ok
+test_daily_cap_is_enforced_across_invoices (test_parapet.PayableTests.test_daily_cap_is_enforced_across_invoices) ... ok
+test_impostor_signature_fails_verification (test_parapet.PayableTests.test_impostor_signature_fails_verification) ... ok
+test_legitimate_bank_change_is_prepared_not_held (test_parapet.PayableTests.test_legitimate_bank_change_is_prepared_not_held) ... ok
+test_no_handshake_available_means_hold (test_parapet.PayableTests.test_no_handshake_available_means_hold) ... ok
+test_observe_tier_never_executes (test_parapet.PayableTests.test_observe_tier_never_executes) ... ok
+test_per_transaction_cap_downgrades_to_prepared (test_parapet.PayableTests.test_per_transaction_cap_downgrades_to_prepared) ... ok
+test_counter_beyond_ceiling_is_not_accepted (test_parapet.ReceivableTests.test_counter_beyond_ceiling_is_not_accepted) ... ok
+test_negotiation_reaches_signed_agreement (test_parapet.ReceivableTests.test_negotiation_reaches_signed_agreement) ... ok
+test_unreachable_buyer_with_high_risk_escalates_to_financing (test_parapet.ReceivableTests.test_unreachable_buyer_with_high_risk_escalates_to_financing) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.004s
+
+OK
