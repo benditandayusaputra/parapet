@@ -5,77 +5,81 @@
 <title>Parapet demo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Domine:wght@700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-:root{--navy:#14213D;--navy2:#1E2F55;--paper:#F7F6F2;--ink:#14213D;--muted:#6A7179;--teal:#1F6F8B;--orange:#D97B2B;--gold:#E8A04A;--line:#DDD9CF;--green:#2E7D5B;--red:#B3422F}
+:root{--navy:#0B1530;--navy2:#14213D;--navy3:#1B2E57;--paper:#F7F6F2;--ink:#E6EEF2;--muted:#8FA3B0;--teal:#5FC3B1;--teal2:#1F6F8B;--orange:#E8A04A;--gold:#E8A04A;--line:rgba(191,216,213,0.18);--glass:rgba(255,255,255,0.05);--green:#5FC3B1;--red:#F2A08E;--amber:#E8A04A}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:1920px;height:1080px;overflow:hidden;background:var(--paper);font-family:'IBM Plex Sans',Arial,sans-serif;color:var(--ink)}
-#stage{position:relative;width:1920px;height:1080px}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#0B1530;font-family:'IBM Plex Sans',Arial,sans-serif;color:var(--ink)}
+#stage{position:relative;width:1920px;height:1080px;background:linear-gradient(135deg,#0B1530 0%,#14213D 55%,#1B2E57 100%)}
+#stage:before{content:"";position:absolute;right:0;top:0;width:1000px;height:1000px;background:radial-gradient(circle at 80% 15%,rgba(95,195,177,0.22),rgba(95,195,177,0) 60%);pointer-events:none}
+#stage:after{content:"";position:absolute;left:0;bottom:0;width:800px;height:600px;background:radial-gradient(circle at 10% 95%,rgba(232,160,74,0.16),rgba(232,160,74,0) 60%);pointer-events:none}
 .scene{position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none}
 .scene.on{opacity:1}
-.card{position:absolute;inset:0;background:var(--navy);color:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:160px}
+.card{position:absolute;inset:0;color:var(--paper);display:flex;flex-direction:column;justify-content:center;padding:160px}
+.card:before{content:"";position:absolute;left:0;top:0;width:1920px;height:10px;background:linear-gradient(90deg,#1F6F8B,#5FC3B1 50%,#E8A04A)}
 .card .eyebrow{color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-weight:600;font-size:26px;margin-bottom:28px}
-.card h1{font-family:'Domine',Georgia,serif;font-size:150px;line-height:1}
+.card h1{font-family:'Domine',Georgia,serif;font-size:150px;line-height:1;background:linear-gradient(90deg,#F7F6F2,#BFE3DB);-webkit-background-clip:text;background-clip:text;color:transparent}
 .card .sub{font-size:48px;color:#BFD8D5;margin-top:28px;max-width:1400px;line-height:1.25}
 .card .foot{position:absolute;left:160px;bottom:140px;font-size:24px;color:#8FA3B0}
-.app{position:absolute;inset:0;display:grid;grid-template-rows:88px 1fr;}
-.top{background:var(--navy);color:var(--paper);display:flex;align-items:center;padding:0 48px;gap:24px;font-size:24px}
-.top b{font-family:'Domine',Georgia,serif;font-size:30px;margin-right:16px}
-.top .pill{background:var(--navy2);padding:8px 16px;border-radius:999px;font-size:20px;color:#BFD8D5}
+.app{position:absolute;inset:0;display:grid;grid-template-rows:88px 1fr}
+.top{background:rgba(11,21,48,0.75);backdrop-filter:blur(8px);color:var(--paper);display:flex;align-items:center;padding:0 48px;gap:20px;font-size:24px;border-bottom:1px solid var(--line);position:relative}
+.top:before{content:"";position:absolute;left:0;top:0;width:1920px;height:6px;background:linear-gradient(90deg,#1F6F8B,#5FC3B1 50%,#E8A04A)}
+.top b{font-family:'Domine',Georgia,serif;font-size:30px;margin-right:16px;color:#F7F6F2}
+.top .pill{background:var(--glass);border:1px solid var(--line);padding:8px 16px;border-radius:999px;font-size:20px;color:#BFD8D5}
 .top .right{margin-left:auto;color:#BFD8D5}
 .body{display:grid;grid-template-columns:760px 1fr;gap:0;height:100%}
 .list{border-right:1px solid var(--line);padding:32px;overflow:hidden}
-.list h2{font-size:22px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:600}
-.inv{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;transition:box-shadow .3s,border-color .3s}
-.inv.sel{border-color:var(--navy);box-shadow:0 0 0 3px rgba(20,33,61,.12)}
+.list h2{font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:600}
+.inv{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto;gap:6px 16px;transition:box-shadow .3s,border-color .3s,background .3s}
+.inv.sel{border-color:var(--teal);background:rgba(95,195,177,0.08);box-shadow:0 0 0 3px rgba(95,195,177,.15)}
 .inv .id{font-family:'IBM Plex Mono',monospace;font-size:20px;color:var(--muted)}
-.inv .name{font-size:24px;font-weight:600}
-.inv .amt{font-size:22px;text-align:right}
+.inv .name{font-size:24px;font-weight:600;color:#F7F6F2}
+.inv .amt{font-size:22px;text-align:right;color:#F7F6F2;font-variant-numeric:tabular-nums}
 .inv .dir{font-size:18px;color:var(--muted);text-align:right}
-.badge{grid-column:1/3;justify-self:start;font-size:18px;font-weight:600;padding:5px 12px;border-radius:999px;background:#EEE;color:var(--muted);opacity:0;transform:translateY(4px);transition:all .35s}
+.badge{grid-column:1/3;justify-self:start;font-size:18px;font-weight:600;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,0.08);color:var(--muted);opacity:0;transform:translateY(4px);transition:all .35s}
 .badge.show{opacity:1;transform:none}
-.badge.exec{background:#DDEFE6;color:var(--green)}.badge.held{background:#F6DED8;color:var(--red)}.badge.prep{background:#FBEBD6;color:#9A5516}.badge.agreed{background:#DCE9EF;color:var(--teal)}.badge.pend{background:#EEE;color:var(--muted)}
+.badge.exec{background:rgba(95,195,177,0.18);color:#5FC3B1}.badge.held{background:rgba(242,160,142,0.18);color:#F2A08E}.badge.prep{background:rgba(232,160,74,0.18);color:#E8A04A}.badge.agreed{background:rgba(31,111,139,0.35);color:#9BD3E3}.badge.pend{background:rgba(255,255,255,0.08);color:var(--muted)}
 .detail{padding:36px 48px;overflow:hidden;position:relative}
 .panel{position:absolute;inset:36px 48px;opacity:0;transition:opacity .45s}
 .panel.on{opacity:1}
-.panel h2{font-family:'Domine',Georgia,serif;font-size:46px;line-height:1.1;margin-bottom:8px}
+.panel h2{font-family:'Domine',Georgia,serif;font-size:46px;line-height:1.1;margin-bottom:8px;color:#F7F6F2}
 .panel .meta{color:var(--muted);font-size:22px;margin-bottom:28px}
-.sig{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:10px;opacity:0;transform:translateX(-10px);transition:all .4s;font-size:24px}
+.sig{display:flex;gap:16px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:10px;opacity:0;transform:translateX(-10px);transition:all .4s;font-size:24px}
 .sig.show{opacity:1;transform:none}
 .sig .w{font-family:'IBM Plex Mono',monospace;color:var(--orange);font-weight:500;min-width:90px}
-.sig .c{font-family:'IBM Plex Mono',monospace;color:var(--navy);min-width:330px}
-.sig .d{color:#4A5568}
+.sig .c{font-family:'IBM Plex Mono',monospace;color:#9BD3E3;min-width:330px}
+.sig .d{color:#BFD8D5}
 .score{display:flex;align-items:baseline;gap:16px;margin:18px 0 26px}
-.score .n{font-family:'Domine',Georgia,serif;font-size:72px;line-height:1}
+.score .n{font-family:'Domine',Georgia,serif;font-size:72px;line-height:1;background:linear-gradient(90deg,#F7F6F2,#E8A04A);-webkit-background-clip:text;background-clip:text;color:transparent}
 .score .l{font-size:22px;color:var(--muted)}
 .hs{display:grid;grid-template-columns:1fr 60px 1fr;gap:20px;align-items:center;margin-top:10px}
-.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px;opacity:0;transition:opacity .45s}
+.box{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:22px 24px;opacity:0;transition:opacity .45s}
 .box.show{opacity:1}
-.box.dark{background:var(--navy);color:var(--paper);border-color:var(--navy)}
-.box h3{font-size:22px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600;color:var(--gold)}
+.box.dark{background:rgba(11,21,48,0.7);border-color:rgba(232,160,74,0.4)}
+.box h3{font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600;color:var(--gold)}
 .box.light h3{color:var(--teal)}
-.box pre{font-family:'IBM Plex Mono',monospace;font-size:22px;line-height:1.5;white-space:pre-wrap}
+.box pre{font-family:'IBM Plex Mono',monospace;font-size:22px;line-height:1.5;white-space:pre-wrap;color:#E6EEF2}
 .arrow{font-size:44px;text-align:center;color:var(--orange);opacity:0;transition:opacity .4s}.arrow.show{opacity:1}
-.verdict{margin-top:24px;font-size:30px;font-weight:600;padding:18px 24px;border-radius:14px;opacity:0;transition:opacity .45s}
+.verdict{margin-top:24px;font-size:30px;font-weight:600;padding:18px 24px;border-radius:14px;opacity:0;transition:opacity .45s;border:1px solid transparent}
 .verdict.show{opacity:1}
-.verdict.bad{background:#F6DED8;color:var(--red)}.verdict.ok{background:#DDEFE6;color:var(--green)}.verdict.warn{background:#FBEBD6;color:#9A5516}
-.msg{margin-top:18px;background:var(--navy);color:var(--paper);border-radius:14px;padding:20px 24px;font-size:24px;line-height:1.45;opacity:0;transition:opacity .45s}
+.verdict.bad{background:rgba(242,160,142,0.14);color:#F2A08E;border-color:rgba(242,160,142,0.5)}.verdict.ok{background:rgba(95,195,177,0.14);color:#5FC3B1;border-color:rgba(95,195,177,0.5)}.verdict.warn{background:rgba(232,160,74,0.14);color:#E8A04A;border-color:rgba(232,160,74,0.5)}
+.msg{margin-top:18px;background:rgba(11,21,48,0.7);color:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px 24px;font-size:24px;line-height:1.45;opacity:0;transition:opacity .45s}
 .msg.show{opacity:1}
-.msg .from{font-size:18px;color:#BFD8D5;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.msg .from{font-size:18px;color:var(--teal);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
 .timeline{display:flex;flex-direction:column;gap:12px;margin-top:8px}
 .step{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start;opacity:0;transform:translateY(6px);transition:all .4s}
 .step.show{opacity:1;transform:none}
 .step .who{font-size:20px;font-weight:600;color:var(--muted);padding-top:12px}
-.step .bub{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:24px;line-height:1.4}
-.step.me .bub{background:var(--navy);color:var(--paper);border-color:var(--navy)}
-.step .bub code{font-family:'IBM Plex Mono',monospace;font-size:20px;color:#BFD8D5}
-.log{font-family:'IBM Plex Mono',monospace;font-size:19px;line-height:1.45;background:#0F1A33;color:#CFE0E5;border-radius:14px;padding:22px;height:620px;overflow:hidden;white-space:pre-wrap}
+.step .bub{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:24px;line-height:1.4;color:#E6EEF2}
+.step.me .bub{background:rgba(31,111,139,0.35);border-color:rgba(95,195,177,0.4);color:#F7F6F2}
+.step .bub code{font-family:'IBM Plex Mono',monospace;font-size:20px;color:#BFE3DB}
+.log{font-family:'IBM Plex Mono',monospace;font-size:19px;line-height:1.45;background:rgba(5,12,30,0.85);color:#CFE0E5;border:1px solid var(--line);border-radius:14px;padding:22px;height:620px;overflow:hidden;white-space:pre-wrap}
 .log .k{color:#E8A04A}.log .ev{color:#9BD3C1}.log .bad{color:#F2A08E}.log .ok{color:#9BD3C1}
 .chain{margin-top:16px;display:flex;gap:16px}
-.chain .t{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;font-size:24px;opacity:0;transition:opacity .45s}
+.chain .t{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:18px 22px;font-size:24px;opacity:0;transition:opacity .45s;color:#BFD8D5}
 .chain .t.show{opacity:1}
-.chain .t b{display:block;font-family:'Domine',Georgia,serif;font-size:40px;color:var(--green)}
-#cap{position:absolute;left:0;right:0;bottom:0;height:120px;background:rgba(20,33,61,.96);color:#F7F6F2;display:flex;align-items:center;justify-content:center;padding:0 160px;font-size:30px;line-height:1.35;text-align:center;opacity:0;transition:opacity .3s}
+.chain .t b{display:block;font-family:'Domine',Georgia,serif;font-size:40px;color:var(--teal)}
+#cap{position:absolute;left:0;right:0;bottom:0;height:120px;background:rgba(5,12,30,0.92);border-top:1px solid var(--line);color:#F7F6F2;display:flex;align-items:center;justify-content:center;padding:0 160px;font-size:30px;line-height:1.35;text-align:center;opacity:0;transition:opacity .3s}
 #cap.show{opacity:1}
-#cursor{position:absolute;width:22px;height:22px;border-radius:50%;background:rgba(217,123,43,.85);box-shadow:0 0 0 6px rgba(217,123,43,.25);pointer-events:none;transition:left .6s ease,top .6s ease;opacity:0}
+#cursor{position:absolute;width:22px;height:22px;border-radius:50%;background:rgba(232,160,74,.9);box-shadow:0 0 0 6px rgba(232,160,74,.25);pointer-events:none;transition:left .6s ease,top .6s ease;opacity:0}
 </style>
 </head>
 <body>
@@ -129,7 +133,7 @@ sign this with the onboarding key</pre></div>
 urgently to the new account.”
 
 attested_claim   true
-signature_valid  <b style="color:#B3422F">false</b></pre></div>
+signature_valid  <b style="color:#F2A08E">false</b></pre></div>
           </div>
           <div class="verdict bad" id="h4">HELD · no money moved · payee frozen until confirmed by phone on the number on file</div>
         </div>
@@ -148,7 +152,7 @@ nonce    ea3fb8cb769989d1</pre></div>
             <div class="box light" id="k3"><h3>Reply from the supplier’s agent</h3><pre>“Attested.”
 
 attested_claim   true
-signature_valid  <b style="color:#2E7D5B">true</b></pre></div>
+signature_valid  <b style="color:#5FC3B1">true</b></pre></div>
           </div>
           <div class="verdict warn" id="k4">PREPARED · payee verified, risk signals remain · one-tap owner approval</div>
           <div class="msg" id="k5"><div class="from">Message to owner</div>Ready for your approval: Plastic film, October (IDR 7,100,000). Payee verified by handshake, but risk signals remain. Why: account changed from Permata ****9876 to BCA ****3322; message announces new banking details.</div>
