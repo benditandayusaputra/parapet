@@ -1,0 +1,77 @@
+[0:00]
+This is Parapet, an AI finance agent for small businesses. It does two things. It collects what the business is owed, and it refuses to pay what the business does not owe.
+
+[0:07]
+Both come from one engine. Let me show you a real morning for a Jakarta packaging company.
+
+[0:12]
+Five invoices in the queue. Three supplier bills, two overdue customers. The owner has set payables to tier three, execute, with a twenty-five million rupiah cap per transaction.
+
+[0:20]
+One of the supplier bills is a trap. The supplier's mailbox was hijacked, and the attacker sent an invoice with new bank details and a lot of urgency.
+
+[0:27]
+One command. Five invoices, five decisions, in under a second.
+
+[0:36]
+The honest ink invoice: paid. The hijacked carton invoice: held. A supplier that really moved banks: prepared, waiting for one tap. And both overdue customers: settlement agreed and signed.
+
+[0:45]
+Here is the trap. Before talking to anyone, the agent found four signals.
+
+[0:50]
+The bank account is not the registered one. The amount is two point one times what this supplier normally bills.
+
+[0:56]
+Four pressure phrases, including "do not call the office", and an announcement of new bank details. Risk, zero point nine.
+
+[1:02]
+But the score is not what stopped the payment. This is. Because the account changed, Parapet challenged the supplier's agent to sign the exact payment details, plus a random nonce.
+
+[1:10]
+The attacker replied: yes, confirmed, pay urgently. They control the mailbox. They never had the key. The signature fails.
+
+[1:17]
+Payment held. No money moved. The owner is told to phone the supplier on the number on file, not the one in the email.
+
+[1:25]
+This is what makes it usable instead of annoying. Kemas Lestari really did move banks. The same signals fire.
+
+[1:31]
+But their agent signed the challenge correctly. Signature valid.
+
+[1:36]
+So instead of a hold, the agent prepares the payment and asks the owner for one tap. Verified, but still a human decision while risk signals remain.
+
+[1:43]
+A guardian that only ever blocks gets switched off in a week. Parapet is built to earn the tier it is given.
+
+[1:50]
+Now money in. Warung Kopi Sejahtera is twenty-four days late, and pays on time only sixty percent of the time.
+
+[1:55]
+Parapet opens firm. Full amount, pay within three days.
+
+[1:59]
+The buyer's agent counters with the first of November, and signs the counter.
+
+[2:04]
+That is inside the owner's fourteen-day ceiling, so Parapet accepts and locks it. The buyer cannot later say they never agreed.
+
+[2:10]
+Same protocol as the fraud check, pointed the other way. Had they refused, this receivable would be escalated for invoice financing, because its risk crossed the threshold.
+
+[2:18]
+Every observation, every handshake, every decision is written to a hash-chained audit log.
+
+[2:28]
+Change one field and the chain breaks. There is a test for that.
+
+[2:32]
+Twelve tests cover the fraud hold, the caps, the tiers, the negotiation, and tamper detection.
+
+[2:36]
+And the language model never makes a decision. It only explains one that the policy engine already made.
+
+[2:43]
+Parapet. One agent, both directions of cash, one verification protocol, and an audit trail a bank can read. Thank you.
